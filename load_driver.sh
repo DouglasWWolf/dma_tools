@@ -52,19 +52,19 @@ fi
 echo -n "Loading driver..."
 case $interrupt_selection in
 	"0")
-		echo "insmod xdma.ko interrupt_mode=1 ..."
+		echo "insmod xdma.ko interrupt_mode=0 ..."
 		ret=`insmod $driver interrupt_mode=0`
 		;;
 	"1")
-		echo "insmod xdma.ko interrupt_mode=2 ..."
+		echo "insmod xdma.ko interrupt_mode=1 ..."
 		ret=`insmod $driver interrupt_mode=1`
 		;;
 	"2")
-		echo "insmod xdma.ko interrupt_mode=3 ..."
+		echo "insmod xdma.ko interrupt_mode=2 ..."
 		ret=`insmod $driver interrupt_mode=2`
 		;;
 	"3")
-		echo "insmod xdma.ko interrupt_mode=4 ..."
+		echo "insmod xdma.ko interrupt_mode=3 ..."
 		ret=`insmod $driver interrupt_mode=3`
 		;;
 	"4")
