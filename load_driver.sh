@@ -107,4 +107,14 @@ else
 	exit 1
 fi
 
+
+# Check to see if the user-group "dma" exists
+grep -q ^dma: /etc/group
+if [ $? == 0 ]; then
+    sudo chgrp dma /dev/xdma*
+    sudo chmod 660 /dev/xdma*
+else
+    echo User group "dma" not found.  Devices have group "root".
+fi
+
 echo "DONE"

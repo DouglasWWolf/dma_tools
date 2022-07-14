@@ -1,0 +1,67 @@
+==================================================================================================
+ Before trying to build or install the XDMA driver, your Linux system must be prepared with some
+ pre-requisites.  These instructions were tested on Ubuntu 20.04 running on a 64-bit x86 host.
+==================================================================================================
+
+
+=================================
+==  Creating user-group "dma"  ==
+=================================
+
+(1) First, find out if the user-group "dma" exists on your computer:
+        grep ^dma: /etc/group 
+    
+    If that command returns a line of text beginning with "dma:", the dma group already exists and
+    you can skip to step (4)
+
+(2) If that command doesn't return a line of text, then create the dma group:
+        sudo groupadd dma
+    
+(3) You can confirm that the group was created by re-running the command:
+        grep ^dma: /etc/group 
+        
+(4) Add your user to the dma group:
+        sudo usermod -a -G dma $USER
+        
+(5) Due to a bug in Ubuntu, the dma group will not appear in your group-list until after a
+    reboot.  To work-around this, you <must> reboot your computer.  (Logging out-then-in-again
+    won't work).
+
+(6) You can confirm that your user was added to the dma group by running the command:
+        groups 
+        
+(7) While not a requirement for working with PCIe and DMA, it's often handy to add
+    your username to the group "dialout" so you can have access to serial devices:
+        sudo usermod -a -G dialout $USER
+        
+     
+
+
+    
+===============================================================
+==  Fixing the bugged pahole-flags.sh script on your system  ==
+===============================================================
+
+(1) Run the command:
+        cat /usr/src/linux-headers-$(uname -r)/scripts/pahole-flags.sh
+
+(2) The first few lines should look like the text below.  
+
+    --------------------------------------------------
+    #!/bin/sh
+    # SPDX-License-Identifier: GPL-2.0
+
+    extra_paholeopt=
+
+    if ! [ -x "$(command -v ${PAHOLE})" ]; then
+        return
+    fi
+    --------------------------------------------------
+
+(3) If you see a "return" statement inside of that "if", change it to "exit 0":
+        sudo sed -i 's/return/exit 0/' /usr/src/linux-headers-$(uname -r)/scripts/pahole-flags.sh
+        
+
+
+    
+   
