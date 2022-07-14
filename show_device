@@ -11,7 +11,6 @@ if [ -z "$line" ]; then
    exit 1
 fi  
 line=($line)
-dev=${line[0]}
+device_id=${line[0]}
 
-lspci -vv -s $dev
-
+lspci -vv -s $device_id
