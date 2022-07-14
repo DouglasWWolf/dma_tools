@@ -1,0 +1,111 @@
+---------------------------------------------------------------------
+ These instructions assume you have 'git' and 'openssl' installed
+
+
+ These instructions show how to create the xdma driver and the tools
+ from scratch.   If you've already downloaded Doug's "dma_tools"
+ folder, the only part of the instructions below that you care 
+ about are fixing the pahole-flag.sh script, and ensuring that
+ your system has an SSL certificate in the appropriate folder
+---------------------------------------------------------------------
+
+
+
+=====================================================================
+===  First, fix the bugged pahole-flags.sh script on your system  ===
+=====================================================================
+Examine the file /usr/src/linux-headers-$(uname -r)/scripts/pahole-flags.sh
+
+The first few lines should look like the text below.   If the do, use "sudo vi /usr/src/linux-headers-$(uname -r)/scripts/pahole-flags.sh"
+and change that return statement to "exit 0"
+--------------------------------------------------
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0
+
+extra_paholeopt=
+
+if ! [ -x "$(command -v ${PAHOLE})" ]; then
+        return
+fi
+--------------------------------------------------
+
+
+=====================================================================================================
+===  Then, make sure that a SSL certificate exists for signing the driver we are going to build  ===
+=====================================================================================================
+ (1)   cd /usr/src/linux-headers-$(uname -r)/certs
+ (2)   if the files 'signing_key.pem' and 'signing_key.x509' exist, then the certificates exist
+ (3)   If those two files don't exist, run this command (from within the '/usr/src/linux-headers-$(uname -r)/certs' directory)
+       sudo openssl req -new -x509 -newkey rsa:2048 -keyout signing_key.pem -outform DER -out signing_key.x509 -nodes -subj "/CN=Owner/"
+
+
+=========================================================
+=== Now download the Xilinx DMA drivers from github.  ===
+=========================================================
+ (1)   cd <to_some_convenient_directory_for_downloding_into>  
+ (2)   git clone https://github.com/Xilinx/dma_ip_drivers.git
+
+
+=============================================
+===  Now we're going to build the driver  ===
+=============================================
+ (1)   cd <top_level_dir>/dma_ip_drivers/XDMA/linux-kernel/xdma
+ (2)   make all
+ (3)   Feel free to ignore these two warning messages if they occur:
+         'CONFIG_X86_X32 enabled but no binutils support'
+         'Warning: modules_install: missing 'System.map' file. Skipping depmod'
+ (4)   This should have created the file 'xdma.ko' in the current directory
+ 
+
+=============================================
+===  Now we're going to build some tools  ===
+=============================================
+ (1)   cd <top_level_dir>/dma_ip_drivers/XDMA/linux-kernel/tools
+ (2)   make
+ (3)   Ignore errors that look like this - warning: format ‘%d’ expects argument of type ‘int’, but argument 3 has type ‘uint64_t’ 
+ 
+
+
+=============================================================
+===  Load the kernel-level driver module we just created  ===
+=============================================================
+ (1)   cd <top_level_dir>/dma_ip_drivers/XDMA/linux-kernel/tests
+ (2)   sudo ./load_driver.sh
+ 
+ 
+ 
+ 
+ 
+ 
+Frequently asked questions:
+  Q: How do I uninstall the kernel module driver?
+  A: Use the following commands to uninstall the driver.
+       - Uninstall the kernel module.
+             rmmod -s xdma
+
+  Q: How do I modify the PCIe Device IDs recognized by the kernel module driver?
+  A: The xdma/xdma_mod.c file constains the pci_device_id struct that identifies
+     the PCIe Device IDs that are recognized by the driver in the following
+     format:
+         { PCI_DEVICE(0x10ee, 0x8038), },
+     Add, remove, or modify the PCIe Device IDs in this struct as desired. Then
+     uninstall the existing xdma kernel module, compile the driver again, and
+     re-install the driver using the load_driver.sh script.
+
+  Q: By default the driver uses interupts to signal when DMA transfers are
+     completed. How do I modify the driver to use polling rather than
+     interrupts to determine when DMA transactions are completed?
+  A: The driver can be changed from being interrupt driven (default) to being
+     polling driven (poll mode) when the kernel module is inserted. To do this
+     modify the load_driver.sh file as follows:
+        Change: insmod xdma/xdma.ko
+        To:     insmod xdma/xdma.ko poll_mode=1
+     Note: Interrupt vs Poll mode will apply to all DMA channels. If desired the
+     driver can be modified such that some channels are interrupt driven while
+     others are polling driven. Refer to the poll mode section of PG195 for
+     additional information on using the PCIe DMA IP in poll mode. 
+     
+    
+     
+     
+
