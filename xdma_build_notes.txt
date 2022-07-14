@@ -33,6 +33,8 @@ fi
 =====================================================================================================
 ===  Then, make sure that a SSL certificate exists for signing the driver we are going to build  ===
 =====================================================================================================
+ (0)   If you've downloaded Doug's "dma_tools" folder, run the script "make_cert.sh" and 
+       skip the rest of the steps in this section.
  (1)   cd /usr/src/linux-headers-$(uname -r)/certs
  (2)   if the files 'signing_key.pem' and 'signing_key.x509' exist, then the certificates exist
  (3)   If those two files don't exist, run this command (from within the '/usr/src/linux-headers-$(uname -r)/certs' directory)
