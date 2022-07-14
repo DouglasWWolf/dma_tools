@@ -1,0 +1,82 @@
+############################################################################################
+
+ These instructions show how to create the xdma driver and the tools from scratch. 
+
+ These instructions assume you have 'git' installed
+ 
+ >>> BEFORE DOING ANYTHING ELSE, FOLLOW THE INSTRUCTIONS IN "PREPARING_YOUR_SYSTEM.txt" <<<
+############################################################################################
+
+
+=========================================================
+=== Now download the Xilinx DMA drivers from github.  ===
+=========================================================
+ (1)   cd <to_some_convenient_directory_for_downloding_into>  
+ (2)   git clone https://ghe-rss.roche.com/wolfd16/dma_tools.git
+       That repo contains the import parts of the Xilinx repo:
+           https://github.com/Xilinx/dma_ip_drivers.git
+
+>>> The following steps are not strictly neccessary because the dma_tools repo already <<<
+>>> contains the pre-built xdma driver, and pre-built tools                            <<<
+
+
+=============================================
+===  Now we're going to build the driver  ===
+=============================================
+ (1)   cd <top_level_dir>/dma_tools/xdma_source/xdma
+ (2)   make 
+ (3)   Feel free to ignore warning regarding "Skipping BTF generation"
+ (4)   This should have created the file 'xdma.ko' in the current directory
+ (5)   cp xdma.ko ../..
+ 
+
+=============================================
+===  Now we're going to build some tools  ===
+=============================================
+ (1)   cd <top_level_dir>/dma_tools/tools_source
+ (2)   make
+
+
+=============================================================
+===  Load the kernel-level driver module we just created  ===
+=============================================================
+ (1)   cd <top_level_dir>/dma_tools
+ (2)   sudo ./load_driver.sh
+ 
+ 
+ 
+ 
+ 
+ 
+Frequently asked questions:
+  Q: How do I uninstall the kernel module driver?
+  A: Use the following commands to uninstall the driver.
+       - Uninstall the kernel module.
+             rmmod -s xdma
+
+  Q: How do I modify the PCIe Device IDs recognized by the kernel module driver?
+  A: The xdma/xdma_mod.c file constains the pci_device_id struct that identifies
+     the PCIe Device IDs that are recognized by the driver in the following
+     format:
+         { PCI_DEVICE(0x10ee, 0x8038), },
+     Add, remove, or modify the PCIe Device IDs in this struct as desired. Then
+     uninstall the existing xdma kernel module, compile the driver again, and
+     re-install the driver using the load_driver.sh script.
+
+  Q: By default the driver uses interupts to signal when DMA transfers are
+     completed. How do I modify the driver to use polling rather than
+     interrupts to determine when DMA transactions are completed?
+  A: The driver can be changed from being interrupt driven (default) to being
+     polling driven (poll mode) when the kernel module is inserted. To do this
+     modify the load_driver.sh file as follows:
+        Change: insmod xdma/xdma.ko
+        To:     insmod xdma/xdma.ko poll_mode=1
+     Note: Interrupt vs Poll mode will apply to all DMA channels. If desired the
+     driver can be modified such that some channels are interrupt driven while
+     others are polling driven. Refer to the poll mode section of PG195 for
+     additional information on using the PCIe DMA IP in poll mode. 
+     
+    
+     
+     
+

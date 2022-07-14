@@ -63,5 +63,30 @@
         
 
 
+
+
+===============================================================
+==  Ensure that a SSL certificate exists for driver signing  ==
+===============================================================
+
+ (1) Run the command:
+         cd /usr/src/linux-headers-$(uname -r)/certs
+
+ (2) Run the command:
+         ls -l signing_key.*
+           
+ (3) If the files 'signing_key.pem' and 'signing_key.x509' exist, then the
+     certificates exist and no further action is neccessary
+       
+ (4) If you've downloaded the "dma_tools" folder, run the script "make_cert.sh" and 
+     skip the rest of the steps in this section.
+            
+ (5) Run this command (from within the '/usr/src/linux-headers-$(uname -r)/certs' directory)
+       sudo openssl req -new -x509 -newkey rsa:2048 -keyout signing_key.pem -outform DER -out signing_key.x509 -nodes -subj "/CN=Owner/"
+
+
+
+
+
     
    
