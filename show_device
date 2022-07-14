@@ -1,6 +1,6 @@
 #!/bin/bash
 # ----------------------------------------------------------------------------------
-#  This script shows the PCI configuration of the Xilinx PCI device
+#  This script shows the PCI configuration of the Xilinx PCI device 
 #
 #  If you run this via 'sudo' you will see "capabilities" information that is 
 #  otherwise protected 
