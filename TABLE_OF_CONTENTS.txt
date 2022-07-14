@@ -1,0 +1,33 @@
+   ===================================================
+    TABLE OF CONTENTS for the dma_tools repository
+   ===================================================
+   
+   >>>--------------------------------------------------------------------<<<
+   >>> Before you do anything DMA related, please follow the instructions <<<
+   >>> in the document PREPARING_YOUR_SYSTEM.txt                          <<<
+   >>>--------------------------------------------------------------------<<<
+   
+   
+Files in the dma_tools repo:
+   
+  TABLE_OF_CONTENTS.txt     - This document
+  PREPARING_YOUR_SYSTEM.txt - Setup instructions that must be the first instructions followed
+  XDMA_BUILD_NOTES.txt      - Instructions for re-building the xdma driver and associated tools
+  
+  make_cert.sh              - Creates the SSL certificate neccessary to rebuild the xdma driver
+  hot_reset                 - A script that will force Linux to re-scan a Xilinx PCIe card
+  show_device               - A script that will show the PCIe device info for a Xilinx PCIe card
+  load_driver.sh            - Loads the XDMA driver into memory and sets permissions on /dev/xdma*
+  
+  dma_from_device           - Useful tool from Xilinx for DMA'ing data to the FPGA card
+  dma_from_device           - Useful tool from Xilinx for DMA'ing data from the FPGA card
+  performance               - Tool from Xilinx for estimating PCIe performance
+  reg_rw                    - Tool from Xilinx for performing 32-bit AXI read-writes
+  test_chrdev               - Tool from Xilinx for testing permissions/access to devices
+    
+  tools_source              - Folder that contains buildable source-code for tools such as "dma_to_device"
+  xdma_source               - Folder that contains buildable source-code for the 'xdma.ko' xdma driver
+   
+  
+  
+     
